@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import api from '../api/api';
 import { AuthContext } from './AuthContext';
 
 export const ApplicationContext = createContext();
@@ -14,8 +14,7 @@ export const ApplicationProvider = ({ children }) => {
     if (!user) return;
     setLoading(true);
     try {
-      const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.get('/api/applications', config);
+      const { data } = await api.get('/api/applications');
       setApplications(data);
       setError(null);
     } catch (err) {
@@ -31,8 +30,7 @@ export const ApplicationProvider = ({ children }) => {
 
   const addApplication = async (appData) => {
     try {
-      const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.post('/api/applications', appData, config);
+      const { data } = await api.post('/api/applications', appData);
       setApplications(prev => [...prev, data]);
       return { success: true };
     } catch (err) {
@@ -42,8 +40,7 @@ export const ApplicationProvider = ({ children }) => {
 
   const updateApplication = async (id, appData) => {
     try {
-      const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.put(`/api/applications/${id}`, appData, config);
+      const { data } = await api.put(`/api/applications/${id}`, appData);
       setApplications(prev => prev.map(app => app._id === id ? data : app));
       return { success: true };
     } catch (err) {
@@ -53,8 +50,7 @@ export const ApplicationProvider = ({ children }) => {
 
   const deleteApplication = async (id) => {
     try {
-      const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.delete(`/api/applications/${id}`, config);
+      await api.delete(`/api/applications/${id}`);
       setApplications(prev => prev.filter(app => app._id !== id));
       return { success: true };
     } catch (err) {
@@ -64,8 +60,7 @@ export const ApplicationProvider = ({ children }) => {
 
   const updateApplicationStatus = async (id, status, order) => {
     try {
-      const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.put(`/api/applications/${id}/status`, { status, order }, config);
+      await api.put(`/api/applications/${id}/status`, { status, order });
       // We don't necessarily need to update state here if we optimistically updated the UI
       return { success: true };
     } catch (err) {

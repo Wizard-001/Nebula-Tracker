@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/api';
 
 export const AuthContext = createContext();
 
@@ -14,13 +14,7 @@ export const AuthProvider = ({ children }) => {
         const userInfo = localStorage.getItem('userInfo');
         if (userInfo) {
           const parsedUser = JSON.parse(userInfo);
-          // Verify token by fetching user profile
-          const config = {
-            headers: {
-              Authorization: `Bearer ${parsedUser.token}`,
-            },
-          };
-          const { data } = await axios.get('/api/auth/me', config);
+          const { data } = await api.get('/api/auth/me');
           setUser({ ...data, token: parsedUser.token });
         }
       } catch (error) {
@@ -35,8 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const config = { headers: { 'Content-Type': 'application/json' } };
-      const { data } = await axios.post('/api/auth/login', { email, password }, config);
+      const { data } = await api.post('/api/auth/login', { email, password });
       setUser(data);
       localStorage.setItem('userInfo', JSON.stringify(data));
       return { success: true };
@@ -48,8 +41,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const config = { headers: { 'Content-Type': 'application/json' } };
-      const { data } = await axios.post('/api/auth/register', { name, email, password }, config);
+      const { data } = await api.post('/api/auth/register', { name, email, password });
       setUser(data);
       localStorage.setItem('userInfo', JSON.stringify(data));
       return { success: true };

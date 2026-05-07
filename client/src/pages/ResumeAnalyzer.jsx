@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import axios from 'axios';
+import api from '../api/api';
 import { AuthContext } from '../context/AuthContext';
 import { UploadCloud, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
@@ -32,14 +32,9 @@ const ResumeAnalyzer = () => {
     formData.append('jobDescription', jobDescription);
 
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
-
-      const { data } = await axios.post('/api/ai/analyze', formData, config);
+      const { data } = await api.post('/api/ai/analyze', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       setResult(data);
     } catch (err) {
       console.error(err);

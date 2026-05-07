@@ -1,5 +1,5 @@
 import { useState, useContext, useRef, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/api';
 import { AuthContext } from '../context/AuthContext';
 import {
   UploadCloud, Play, Send, Loader2, CheckCircle2, XCircle,
@@ -440,7 +440,7 @@ const MockInterview = () => {
   const [error, setError] = useState(null);
   const [currentFeedback, setCurrentFeedback] = useState(null);
 
-  const config = { headers: { Authorization: `Bearer ${user.token}` } };
+
 
   // Start interview
   const handleStart = async ({ file, role: targetRole, numQuestions }) => {
@@ -454,11 +454,8 @@ const MockInterview = () => {
       formData.append('numQuestions', numQuestions);
       if (file) formData.append('resume', file);
 
-      const { data } = await axios.post('/api/interview/start', formData, {
-        headers: {
-          ...config.headers,
-          'Content-Type': 'multipart/form-data',
-        },
+      const { data } = await api.post('/api/interview/start', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       setQuestions(data.questions);
@@ -479,12 +476,12 @@ const MockInterview = () => {
 
     try {
       const q = questions[currentIndex];
-      const { data } = await axios.post('/api/interview/evaluate', {
+      const { data } = await api.post('/api/interview/evaluate', {
         question: q.question,
         answer,
         questionType: q.type,
         role,
-      }, config);
+      });
 
       setCurrentFeedback(data);
       setPhase('feedback');
