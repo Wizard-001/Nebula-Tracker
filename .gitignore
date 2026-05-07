@@ -1,0 +1,18 @@
+# Root gitignore
+node_modules/
+.env
+.DS_Store
+dist/
+build/
+.npm
+.eslintcache
+
+# Client specific
+client/node_modules/
+client/dist/
+client/.env
+
+# Server specific
+server/node_modules/
+server/.env
+server/uploads/
